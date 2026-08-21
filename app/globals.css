@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  width: 100%;
+  min-width: 0;
+}
+
+html,
+body {
+  max-width: 100%;
+}
+* {
+  box-sizing: border-box;
+}
+
+.article-editor .ProseMirror {
+  min-height: 500px;
+  outline: none;
+}
+
+.article-editor .ProseMirror p {
+  margin: 0.75rem 0;
+  line-height: 1.8;
+}
+
+.article-editor .ProseMirror h2 {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.article-editor .ProseMirror h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.article-editor .ProseMirror ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  list-style: disc;
+}
+
+.article-editor .ProseMirror ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  list-style: decimal;
+}
+
+.article-editor .ProseMirror blockquote {
+  margin: 1.5rem 0;
+  border-left: 3px solid #c58a2a;
+  padding-left: 1rem;
+  color: #666;
+  font-style: italic;
+}
+
+.article-editor .ProseMirror a {
+  color: #a66f17;
+  text-decoration: underline;
+}
+
+.article-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: "Start writing your article...";
+  float: left;
+  height: 0;
+  color: #9ca3af;
+  pointer-events: none;
+}
