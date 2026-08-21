@@ -495,15 +495,17 @@ export default function ArticleEditor({
    * =========================
    */
 
-  function handlePreview() {
-    if (!editor) return;
+function handlePreview() {
+  if (!editor) return;
 
-    setContent(editor.getHTML());
+  const html = editor.getHTML();
 
-    setMessage("");
+  console.log("EDITOR CONTENT:", html);
 
-    setPreview(true);
-  }
+  setContent(html);
+  setMessage("");
+  setPreview(true);
+}
 
   /*
    * =========================

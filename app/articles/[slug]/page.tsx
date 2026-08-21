@@ -271,24 +271,11 @@ export default async function ArticlePage({
           <article className="order-1 min-w-0 lg:order-2">
 
             <div
-              className="
-                prose
-                prose-lg
-                max-w-none
-                prose-headings:font-semibold
-                prose-headings:text-gray-900
-                prose-p:text-gray-700
-                prose-p:leading-relaxed
-                prose-a:text-yellow-600
-                prose-strong:text-gray-900
-                prose-blockquote:border-yellow-600
-                prose-blockquote:text-gray-600
-                prose-img:rounded-xl
-              "
-              dangerouslySetInnerHTML={{
-                __html: article.content,
-              }}
-            />
+  className="article-content"
+  dangerouslySetInnerHTML={{
+    __html: article.content,
+  }}
+/>
 
             {/* TAGS */}
 
