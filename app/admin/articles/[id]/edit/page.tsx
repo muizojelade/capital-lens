@@ -22,9 +22,14 @@ export default async function EditArticlePage({
     .eq("id", id)
     .single();
 
-  if (error || !article) {
-    notFound();
-  }
+if (error) {
+  console.error("EDIT ARTICLE SUPABASE ERROR:", error);
+  throw new Error(`Failed to load article: ${error.message}`);
+}
+
+if (!article) {
+  notFound();
+}
 
   return (
     <main className="min-h-screen bg-[#f8f8f6] text-[#171717]">
