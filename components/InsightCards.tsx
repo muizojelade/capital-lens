@@ -1,9 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getArticles } from "@/lib/articles";
+import { supabase } from "@/lib/supabase";
 
 export default async function InsightCards() {
-  const articles = (await getArticles()).slice(0, 3);
+  const { data: articles, error } = await supabase
+    .from("articles")
+    .select(
+      "id, title, slug, excerpt, category, cover_image, created_at"
+    )
+    .eq("status", "published")
+    .order("created_at", { ascending: false })
+    .limit(3);
+
+  if (error) {
+    console.error("Homepage articles fetch error:", error);
+  }
 
   return (
     <section className="px-6 py-20">
@@ -28,18 +39,18 @@ export default async function InsightCards() {
         {/* ARTICLES */}
 
         <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {articles.map((article) => (
+          {articles?.map((article) => (
             <Link
-              key={article.slug}
+              key={article.id}
               href={`/articles/${article.slug}`}
               className="group overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
             >
               {/* IMAGE */}
 
-              {article.image ? (
+              {article.cover_image ? (
                 <div className="relative aspect-[16/10] w-full overflow-hidden">
                   <Image
-                    src={article.image}
+                    src={article.cover_image}
                     alt={article.title}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -67,17 +78,19 @@ export default async function InsightCards() {
                   {article.title}
                 </h3>
 
-                <p className="mt-3 line-clamp-3 text-gray-600">
-                  {article.description}
-                </p>
+                {article.excerpt && (
+                  <p className="mt-3 line-clamp-3 text-gray-600">
+                    {article.excerpt}
+                  </p>
+                )}
 
                 <div className="mt-5 flex flex-wrap items-center gap-2 text-sm text-gray-500">
-                  <span>{article.author}</span>
+                  <span>Capital Lens</span>
 
                   <span>·</span>
 
                   <span>
-                    {new Date(article.date).toLocaleDateString(
+                    {new Date(article.created_at).toLocaleDateString(
                       "en-US",
                       {
                         year: "numeric",
@@ -86,16 +99,6 @@ export default async function InsightCards() {
                       }
                     )}
                   </span>
-
-                  {article.readingTime && (
-                    <>
-                      <span>·</span>
-
-                      <span>
-                        {article.readingTime} min read
-                      </span>
-                    </>
-                  )}
                 </div>
 
                 <span className="mt-6 inline-block text-sm font-semibold text-yellow-600 transition-transform duration-300 group-hover:translate-x-1">
@@ -108,7 +111,7 @@ export default async function InsightCards() {
 
         {/* EMPTY STATE */}
 
-        {articles.length === 0 && (
+        {(!articles || articles.length === 0) && (
           <div className="mt-12 py-16 text-center">
             <p className="text-gray-500">
               No published articles yet.
