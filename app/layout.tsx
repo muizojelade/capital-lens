@@ -28,6 +28,18 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="overflow-x-hidden">
+        <script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{
+    __html: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Capital Lens",
+      description:
+        "Independent perspectives on markets, investing, economics, and the forces shaping global capital.",
+    }),
+  }}
+/>
         <Navbar />
         {children}
         <Footer />

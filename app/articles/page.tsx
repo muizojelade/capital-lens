@@ -4,11 +4,46 @@ import ArticleCard from "@/components/ArticleCard";
 import ArticleSearch from "@/components/ArticleSearch";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Market Insights & Analysis",
-  description:
-    "Explore financial research, investment perspectives, and market analysis from Capital Lens.",
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    category?: string;
+    search?: string;
+  }>;
+}): Promise<Metadata> {
+  const { category, search } = await searchParams;
+
+  const hasFilter = Boolean(category || search);
+
+  if (hasFilter) {
+    return {
+      title: category
+        ? `${category} Articles`
+        : "Search Results",
+
+      description:
+        "Browse Capital Lens market insights, investment perspectives, and financial analysis.",
+
+      robots: {
+        index: false,
+        follow: true,
+      },
+    };
+  }
+
+  return {
+    title: "Market Insights & Analysis",
+
+    description:
+      "Explore financial research, investment perspectives, and market analysis from Capital Lens.",
+
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
 
 export default async function ArticlesPage({
   searchParams,

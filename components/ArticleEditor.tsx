@@ -1,5 +1,6 @@
 "use client";
 
+import { ARTICLE_CATEGORIES } from "@/lib/categories";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { EditorContent, useEditor } from "@tiptap/react";
@@ -761,20 +762,30 @@ function handlePreview() {
           {/* CATEGORY */}
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              Category
-            </label>
+  <label className="mb-2 block text-sm font-medium">
+    Category
+  </label>
 
-            <input
-              type="text"
-              value={category}
-              onChange={(e) =>
-                setCategory(e.target.value)
-              }
-              placeholder="e.g. Markets"
-              className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none transition focus:border-black/30"
-            />
-          </div>
+  <select
+    value={category}
+    onChange={(e) => setCategory(e.target.value)}
+    className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none transition focus:border-black/30"
+  >
+    <option value="">
+      Select a category
+    </option>
+
+    {ARTICLE_CATEGORIES.map((item) => (
+      <option key={item} value={item}>
+        {item}
+      </option>
+    ))}
+  </select>
+
+  <p className="mt-1 text-xs text-gray-400">
+    Choose the category that best fits this article.
+  </p>
+</div>
 
           {/* TAGS */}
 

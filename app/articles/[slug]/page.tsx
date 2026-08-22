@@ -238,8 +238,57 @@ export default async function ArticlePage({
     day: "numeric",
   });
 
+  /*
+   * Article structured data.
+   */
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+
+    headline: article.title,
+
+    description:
+      article.excerpt ||
+      `Read ${article.title} on Capital Lens.`,
+
+    ...(article.cover_image
+      ? {
+          image: [article.cover_image],
+        }
+      : {}),
+
+    datePublished: article.created_at,
+
+    dateModified: article.created_at,
+
+    author: {
+      "@type": "Organization",
+      name: "Capital Lens",
+    },
+
+    publisher: {
+      "@type": "Organization",
+      name: "Capital Lens",
+    },
+
+    articleSection: article.category || "Insights",
+
+    ...(article.tags
+      ? {
+          keywords: article.tags,
+        }
+      : {}),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(articleSchema),
+        }}
+      />
+
       <ReadingProgress />
 
       <main className="mx-auto max-w-7xl px-6 pb-20 pt-28">
@@ -370,11 +419,11 @@ export default async function ArticlePage({
           <article className="order-1 min-w-0 lg:order-2">
 
             <div
-  className="article-content"
-  dangerouslySetInnerHTML={{
-    __html: article.content,
-  }}
-/>
+              className="article-content"
+              dangerouslySetInnerHTML={{
+                __html: article.content,
+              }}
+            />
 
             {/* TAGS */}
 
@@ -416,3 +465,4 @@ export default async function ArticlePage({
     </>
   );
 }
+

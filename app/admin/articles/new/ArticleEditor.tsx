@@ -391,18 +391,18 @@ export default function ArticleEditor() {
             </label>
 
             <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm outline-none focus:border-[#c58a2a]"
-            >
-              <option value="">Select category</option>
-              <option value="markets">Markets</option>
-              <option value="investing">Investing</option>
-              <option value="economy">Economy</option>
-              <option value="business">Business</option>
-              <option value="technology">Technology</option>
-              <option value="personal-finance">Personal Finance</option>
-            </select>
+  value={category}
+  onChange={(e) => setCategory(e.target.value)}
+  className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm outline-none focus:border-[#c58a2a]"
+>
+  <option value="">Select category</option>
+  <option value="markets">Markets</option>
+  <option value="investing">Investing</option>
+  <option value="economy">Economy</option>
+  <option value="crypto">Crypto</option>
+  <option value="commodities">Commodities</option>
+  <option value="finance-101">Finance 101</option>
+</select>
           </div>
 
           {/* Tags */}
