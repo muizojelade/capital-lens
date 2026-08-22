@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -14,25 +15,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Capital Lens",
-    template: "%s | Capital Lens",
-  },
-  description:
-    "Independent perspectives on markets, investing, economics, and the forces shaping global capital.",
-  keywords: [
-    "Capital Lens",
-    "investing",
-    "financial markets",
-    "global markets",
-    "economics",
-    "investment insights",
-  ],
-  authors: [{ name: "Capital Lens" }],
-  creator: "Capital Lens",
-  publisher: "Capital Lens",
-};
+
 
 export default function RootLayout({
   children,
@@ -52,3 +35,4 @@ export default function RootLayout({
     </html>
   );
 }
+

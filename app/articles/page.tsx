@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import { getArticles } from "@/lib/articles";
 import ArticleCard from "@/components/ArticleCard";
 import ArticleSearch from "@/components/ArticleSearch";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Market Insights & Analysis",
+  description:
+    "Explore financial research, investment perspectives, and market analysis from Capital Lens.",
+};
 
 export default async function ArticlesPage({
   searchParams,

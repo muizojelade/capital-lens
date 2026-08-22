@@ -1,23 +1,48 @@
+
 "use client";
 
 import { FormEvent, useState } from "react";
 import { motion } from "framer-motion";
+import { supabase } from "@/lib/supabase";
 
 export default function Newsletter() {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error" | "exists"
+  >("idle");
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!email.trim()) {
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (!cleanEmail) {
       setStatus("error");
+      return;
+    }
+
+    setStatus("loading");
+
+    const { error } = await supabase
+      .from("newsletter_subscribers")
+      .insert({
+        email: cleanEmail,
+      });
+
+    if (error) {
+      if (error.code === "23505") {
+        setStatus("exists");
+      } else {
+        console.error("Newsletter subscription error:", error);
+        setStatus("error");
+      }
+
       return;
     }
 
     setStatus("success");
     setEmail("");
-  };
+  }
 
   return (
     <section className="px-6 py-20">
@@ -78,32 +103,42 @@ export default function Newsletter() {
             }}
             placeholder="Enter your email"
             required
+            disabled={status === "loading"}
             whileFocus={{
               scale: 1.01,
             }}
             transition={{
               duration: 0.2,
             }}
-            className="flex-1 rounded-xl bg-white px-5 py-4 text-gray-900 outline-none placeholder:text-gray-400"
+            className="flex-1 rounded-xl bg-white px-5 py-4 text-gray-900 outline-none placeholder:text-gray-400 disabled:opacity-60"
           />
 
           <motion.button
             type="submit"
-            className="cursor-pointer rounded-xl bg-yellow-600 px-8 py-4 text-white"
-            whileHover={{
-              scale: 1.05,
-              y: -2,
-            }}
-            whileTap={{
-              scale: 0.97,
-            }}
+            disabled={status === "loading"}
+            className="cursor-pointer rounded-xl bg-yellow-600 px-8 py-4 text-white disabled:cursor-not-allowed disabled:opacity-60"
+            whileHover={
+              status !== "loading"
+                ? {
+                    scale: 1.05,
+                    y: -2,
+                  }
+                : undefined
+            }
+            whileTap={
+              status !== "loading"
+                ? {
+                    scale: 0.97,
+                  }
+                : undefined
+            }
             transition={{
               type: "spring",
               stiffness: 400,
               damping: 17,
             }}
           >
-            Subscribe
+            {status === "loading" ? "Subscribing..." : "Subscribe"}
           </motion.button>
         </motion.form>
 
@@ -117,13 +152,23 @@ export default function Newsletter() {
           </motion.p>
         )}
 
+        {status === "exists" && (
+          <motion.p
+            className="mt-4 text-sm text-yellow-400"
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            This email is already subscribed.
+          </motion.p>
+        )}
+
         {status === "error" && (
           <motion.p
             className="mt-4 text-sm text-red-400"
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            Please enter a valid email address.
+            Something went wrong. Please try again.
           </motion.p>
         )}
 

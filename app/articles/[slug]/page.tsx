@@ -1,3 +1,5 @@
+
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -19,6 +21,103 @@ type Article = {
   status: string;
   created_at: string;
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+
+  const { data: article } = await supabase
+    .from("articles")
+    .select(
+      "title, slug, excerpt, category, tags, cover_image, created_at, status"
+    )
+    .eq("slug", slug)
+    .eq("status", "published")
+    .maybeSingle();
+
+  if (!article) {
+    return {
+      title: "Article Not Found",
+      description:
+        "The requested Capital Lens article could not be found.",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  const description =
+    article.excerpt ||
+    `Read ${article.title} on Capital Lens — independent perspectives on markets, investing, economics, and global capital.`;
+
+  const keywords = article.tags
+    ? article.tags
+        .split(",")
+        .map((tag: string) => tag.trim())
+        .filter(Boolean)
+    : [];
+
+  return {
+    title: article.title,
+
+    description,
+
+    keywords,
+
+    authors: [{ name: "Capital Lens" }],
+
+    openGraph: {
+      title: article.title,
+      description,
+      type: "article",
+      siteName: "Capital Lens",
+      locale: "en_US",
+
+      publishedTime: article.created_at,
+
+      authors: ["Capital Lens"],
+
+      section: article.category || "Insights",
+
+      ...(article.tags
+        ? {
+            tags: keywords,
+          }
+        : {}),
+
+      ...(article.cover_image
+        ? {
+            images: [
+              {
+                url: article.cover_image,
+                alt: article.title,
+              },
+            ],
+          }
+        : {}),
+    },
+
+    twitter: {
+      card: article.cover_image
+        ? "summary_large_image"
+        : "summary",
+
+      title: article.title,
+
+      description,
+
+      ...(article.cover_image
+        ? {
+            images: [article.cover_image],
+          }
+        : {}),
+    },
+  };
+}
 
 export default async function ArticlePage({
   params,

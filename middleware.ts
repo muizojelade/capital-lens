@@ -6,6 +6,22 @@ export async function middleware(request: NextRequest) {
     request,
   });
 
+  /*
+   * =========================
+   * ALLOW LOGIN PAGE
+   * =========================
+   */
+
+  if (request.nextUrl.pathname === "/admin/login") {
+    return response;
+  }
+
+  /*
+   * =========================
+   * SUPABASE SERVER CLIENT
+   * =========================
+   */
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
@@ -32,13 +48,54 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  await supabase.auth.getUser();
+  /*
+   * =========================
+   * CHECK AUTHENTICATION
+   * =========================
+   */
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  /*
+   * =========================
+   * REQUIRE LOGIN
+   * =========================
+   */
+
+  if (!user) {
+    const loginUrl = new URL(
+      "/admin/login",
+      request.url
+    );
+
+    loginUrl.searchParams.set(
+      "redirect",
+      request.nextUrl.pathname
+    );
+
+    return NextResponse.redirect(loginUrl);
+  }
+
+  /*
+   * =========================
+   * ADMIN USER ONLY
+   * =========================
+   */
+
+  const ADMIN_USER_ID =
+    "26c2e53b-2ad7-4829-8835-72486fe7e1de";
+
+  if (user.id !== ADMIN_USER_ID) {
+    return NextResponse.redirect(
+      new URL("/", request.url)
+    );
+  }
 
   return response;
 }
 
 export const config = {
-  matcher: [
-    "/admin/:path*",
-  ],
+  matcher: ["/admin/:path*"],
 };
