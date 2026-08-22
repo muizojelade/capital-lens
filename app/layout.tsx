@@ -19,6 +19,10 @@ const siteUrl = "https://capital-lens-eta.vercel.app";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
 
+    verification: {
+    google: "YRh_1RUwGHBAD4qMr4dHE0NYwIX9l1TCFHo80WVQdS8",
+  },
+
   title: {
     default: "Capital Lens",
     template: "%s | Capital Lens",
@@ -80,6 +84,7 @@ export const metadata: Metadata = {
     },
   },
 };
+
 
 export default function RootLayout({
   children,
