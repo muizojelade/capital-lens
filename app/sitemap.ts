@@ -7,15 +7,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { data: articles } = await supabase
     .from("articles")
     .select("slug, created_at")
-    .eq("status", "published");
+    .eq("status", "published")
+    .order("created_at", { ascending: false });
 
-  const articleUrls =
-    articles?.map((article) => ({
-      url: `${baseUrl}/insights/${article.slug}`,
-      lastModified: new Date(article.created_at),
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    })) ?? [];
+  const articleUrls: MetadataRoute.Sitemap =
+    (articles || []).map((article) => ({
+      url: `${baseUrl}/articles/${article.slug}`,
+      lastModified: article.created_at
+        ? new Date(article.created_at)
+        : new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    }));
 
   return [
     {
@@ -25,7 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: `${baseUrl}/insights`,
+      url: `${baseUrl}/articles`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
@@ -36,7 +39,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.8,
     },
-
     ...articleUrls,
   ];
 }
