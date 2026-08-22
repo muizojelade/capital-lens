@@ -30,6 +30,9 @@ export const metadata: Metadata = {
 
   description:
     "Independent perspectives on markets, investing, economics, and the forces shaping global capital.",
+    other: {
+  "google-adsense-account": "ca-pub-3970518509028666",
+},
 
   keywords: [
     "markets",
