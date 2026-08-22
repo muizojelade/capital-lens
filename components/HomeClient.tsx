@@ -1,10 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Globe from "@/components/Globe";
 
 export default function HomeClient() {
+  const router = useRouter();
   return (
     <>
       {/* HERO SECTION */}
@@ -80,22 +82,24 @@ export default function HomeClient() {
 </Link>
 
             <motion.button
-              className="cursor-pointer border border-yellow-600 px-6 py-3 text-yellow-600"
-              whileHover={{
-                scale: 1.05,
-                y: -2,
-              }}
-              whileTap={{
-                scale: 0.97,
-              }}
-              transition={{
-                type: "spring",
-                stiffness: 400,
-                damping: 17,
-              }}
-            >
-              Start Learning
-            </motion.button>
+  type="button"
+  onClick={() => router.push("/articles")}
+  className="cursor-pointer border border-yellow-600 px-6 py-3 text-yellow-600"
+  whileHover={{
+    scale: 1.05,
+    y: -2,
+  }}
+  whileTap={{
+    scale: 0.97,
+  }}
+  transition={{
+    type: "spring",
+    stiffness: 400,
+    damping: 17,
+  }}
+>
+  Start Learning
+</motion.button>
           </motion.div>
         </motion.div>
       </section>
