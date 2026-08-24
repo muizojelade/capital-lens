@@ -1,20 +1,59 @@
+
 import Image from "next/image";
 import Link from "next/link";
-import { getArticles } from "@/lib/articles";
+import { supabase } from "@/lib/supabase";
 
 export default async function EditorsPick() {
-  const articles = await getArticles();
+  const { data: featuredArticle, error } = await supabase
+    .from("articles")
+    .select(
+      `
+      id,
+      slug,
+      title,
+      excerpt,
+      category,
+      cover_image,
+      editor_pick,
+      status,
+      created_at,
+      content
+      `
+    )
+    .eq("status", "published")
+    .eq("editor_pick", true)
+    .order("created_at", {
+      ascending: false,
+    })
+    .limit(1)
+    .maybeSingle();
 
-  const featuredArticle = articles.find(
-    (article) => article.editor_pick === true
-  );
+  if (error) {
+    console.error(
+      "Failed to fetch Editor's Pick:",
+      error
+    );
+
+    return null;
+  }
 
   if (!featuredArticle) {
     return null;
   }
 
+  const words = (featuredArticle.content || "")
+    .replace(/<[^>]*>/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
+
+  const readingTime = Math.max(
+    1,
+    Math.ceil(words / 200)
+  );
+
   const formattedDate = new Date(
-    featuredArticle.date
+    featuredArticle.created_at
   ).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -24,12 +63,13 @@ export default async function EditorsPick() {
   return (
     <section className="mx-auto max-w-7xl px-6 py-20">
       <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+
         {/* ARTICLE IMAGE */}
 
         <div className="relative h-80 overflow-hidden rounded-3xl bg-yellow-50 md:h-[420px]">
-          {featuredArticle.image ? (
+          {featuredArticle.cover_image ? (
             <Image
-              src={featuredArticle.image}
+              src={featuredArticle.cover_image}
               alt={featuredArticle.title}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
@@ -38,7 +78,9 @@ export default async function EditorsPick() {
           ) : (
             <div className="flex h-full items-center justify-center">
               <div className="text-center">
-                <div className="text-7xl">📈</div>
+                <div className="text-7xl">
+                  📈
+                </div>
 
                 <p className="mt-4 text-gray-500">
                   Featured Financial Analysis
@@ -59,28 +101,24 @@ export default async function EditorsPick() {
             {featuredArticle.title}
           </h2>
 
-          {featuredArticle.description && (
+          {featuredArticle.excerpt && (
             <p className="mt-5 text-lg leading-relaxed text-gray-600">
-              {featuredArticle.description}
+              {featuredArticle.excerpt}
             </p>
           )}
 
           <div className="mt-5 flex flex-wrap items-center gap-2 text-sm text-gray-500">
-            <span>{featuredArticle.author}</span>
+            <span>Capital Lens</span>
 
             <span>·</span>
 
             <span>{formattedDate}</span>
 
-            {featuredArticle.readingTime && (
-              <>
-                <span>·</span>
+            <span>·</span>
 
-                <span>
-                  {featuredArticle.readingTime} min read
-                </span>
-              </>
-            )}
+            <span>
+              {readingTime} min read
+            </span>
           </div>
 
           <Link
@@ -94,3 +132,4 @@ export default async function EditorsPick() {
     </section>
   );
 }
+
